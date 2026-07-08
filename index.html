@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>고1 필수 영어단어 50개</title>
+
+<style>
+body{
+    font-family: Arial, sans-serif;
+    background:#f2f6ff;
+    margin:20px;
+    text-align:center;
+}
+
+h1{
+    color:#2c3e50;
+}
+
+button{
+    padding:10px 18px;
+    margin:10px;
+    font-size:16px;
+    border:none;
+    border-radius:8px;
+    background:#4a90e2;
+    color:white;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#357ABD;
+}
+
+#cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:15px;
+    margin-top:20px;
+}
+
+.card{
+    background:white;
+    padding:15px;
+    border-radius:12px;
+    box-shadow:0 2px 8px rgba(0,0,0,.15);
+    transition:.3s;
+    cursor:pointer;
+}
+
+.card:hover{
+    transform:scale(1.03);
+}
+
+.word{
+    font-size:24px;
+    font-weight:bold;
+    color:#2c3e50;
+}
+
+.meaning{
+    margin-top:10px;
+    font-size:18px;
+    color:#444;
+    display:none;
+}
+
+.learned{
+    background:#d4ffd4;
+}
+</style>
+
+</head>
+<body>
+
+<h1>📚 고1 필수 영어단어 50개</h1>
+
+<button onclick="toggleMeaning()">뜻 보기 / 숨기기</button>
+<button onclick="shuffleCards()">🔀 섞기</button>
+
+<div id="cards"></div>
+
+<script>
+
+const words = [
+["achieve","성취하다"],
+["accept","받아들이다"],
+["allow","허락하다"],
+["ancient","고대의"],
+["appear","나타나다"],
+["argue","주장하다"],
+["avoid","피하다"],
+["benefit","이익"],
+["compare","비교하다"],
+["consider","고려하다"],
+["create","창조하다"],
+["culture","문화"],
+["decide","결정하다"],
+["describe","묘사하다"],
+["develop","발전시키다"],
+["difference","차이"],
+["education","교육"],
+["effect","영향"],
+["environment","환경"],
+["experience","경험"],
+["express","표현하다"],
+["future","미래"],
+["government","정부"],
+["improve","향상시키다"],
+["include","포함하다"],
+["increase","증가하다"],
+["individual","개인의"],
+["knowledge","지식"],
+["language","언어"],
+["manage","관리하다"],
+["memory","기억"],
+["opinion","의견"],
+["opportunity","기회"],
+["perform","수행하다"],
+["possible","가능한"],
+["prepare","준비하다"],
+["prevent","예방하다"],
+["problem","문제"],
+["produce","생산하다"],
+["protect","보호하다"],
+["purpose","목적"],
+["relationship","관계"],
+["require","요구하다"],
+["respect","존경하다"],
+["responsible","책임 있는"],
+["society","사회"],
+["success","성공"],
+["support","지원하다"],
+["tradition","전통"],
+["value","가치"]
+];
+
+const cards=document.getElementById("cards");
+
+function display(){
+    cards.innerHTML="";
+    words.forEach(([word,meaning])=>{
+        const card=document.createElement("div");
+        card.className="card";
+
+        card.innerHTML=`
+            <div class="word">${word}</div>
+            <div class="meaning">${meaning}</div>
+        `;
+
+        card.onclick=()=>{
+            card.classList.toggle("learned");
+        }
+
+        cards.appendChild(card);
+    });
+}
+
+function toggleMeaning(){
+    document.querySelectorAll(".meaning").forEach(m=>{
+        m.style.display=(m.style.display==="block")?"none":"block";
+    });
+}
+
+function shuffleCards(){
+    words.sort(()=>Math.random()-0.5);
+    display();
+}
+
+display();
+
+</script>
+
+</body>
+</html>
