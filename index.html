@@ -3,86 +3,146 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>고1 필수 영어단어 50개</title>
+<title>고1 영어 단어 퀘스트</title>
 
 <style>
+*{box-sizing:border-box;font-family:Arial,sans-serif}
 body{
-    font-family: Arial, sans-serif;
-    background:#f2f6ff;
-    margin:20px;
-    text-align:center;
+    margin:0;
+    background:linear-gradient(135deg,#4facfe,#00f2fe);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
 }
-
-h1{
-    color:#2c3e50;
-}
-
-button{
-    padding:10px 18px;
-    margin:10px;
-    font-size:16px;
-    border:none;
-    border-radius:8px;
-    background:#4a90e2;
-    color:white;
-    cursor:pointer;
-}
-
-button:hover{
-    background:#357ABD;
-}
-
-#cards{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-    gap:15px;
-    margin-top:20px;
-}
-
-.card{
+.container{
     background:white;
-    padding:15px;
-    border-radius:12px;
-    box-shadow:0 2px 8px rgba(0,0,0,.15);
-    transition:.3s;
-    cursor:pointer;
+    width:95%;
+    max-width:700px;
+    padding:30px;
+    border-radius:20px;
+    text-align:center;
+    box-shadow:0 10px 30px rgba(0,0,0,.2);
 }
+h1{margin-top:0;color:#2c3e50;}
 
-.card:hover{
-    transform:scale(1.03);
-}
-
-.word{
-    font-size:24px;
-    font-weight:bold;
-    color:#2c3e50;
+.info{
+display:flex;
+justify-content:space-around;
+margin:20px 0;
+font-size:20px;
+font-weight:bold;
 }
 
 .meaning{
-    margin-top:10px;
-    font-size:18px;
-    color:#444;
-    display:none;
+font-size:36px;
+margin:40px 0;
+color:#1565c0;
+font-weight:bold;
 }
 
-.learned{
-    background:#d4ffd4;
+input{
+width:90%;
+padding:15px;
+font-size:24px;
+text-align:center;
+border-radius:10px;
+border:2px solid #2196f3;
+}
+
+button{
+margin-top:20px;
+padding:15px 30px;
+font-size:20px;
+border:none;
+background:#2196f3;
+color:white;
+border-radius:10px;
+cursor:pointer;
+}
+
+button:hover{
+background:#1565c0;
+}
+
+#message{
+height:40px;
+font-size:24px;
+margin-top:20px;
+font-weight:bold;
+}
+
+.correct{color:green;}
+.wrong{color:red;}
+
+#game{display:none;}
+
+#result{
+display:none;
+}
+
+ul{
+text-align:left;
 }
 </style>
-
 </head>
+
 <body>
 
-<h1>📚 고1 필수 영어단어 50개</h1>
+<div class="container">
 
-<button onclick="toggleMeaning()">뜻 보기 / 숨기기</button>
-<button onclick="shuffleCards()">🔀 섞기</button>
+<div id="start">
 
-<div id="cards"></div>
+<h1>🎮 WORD QUEST</h1>
+
+<p>60초 동안 최대한 많은 단어를 맞혀보세요!</p>
+
+<button onclick="startGame()">게임 시작</button>
+
+</div>
+
+<div id="game">
+
+<div class="info">
+<div>⏰ <span id="time">60</span></div>
+<div>⭐ <span id="score">0</span></div>
+<div>🔥 <span id="combo">0</span></div>
+<div>❤️ <span id="life">3</span></div>
+</div>
+
+<div class="meaning" id="meaning"></div>
+
+<input id="answer" autocomplete="off">
+
+<br>
+
+<button onclick="checkAnswer()">제출</button>
+
+<div id="message"></div>
+
+</div>
+
+<div id="result">
+
+<h2>게임 종료!</h2>
+
+<h3 id="finalScore"></h3>
+
+<p id="accuracy"></p>
+
+<h3>틀린 단어</h3>
+
+<ul id="wrongList"></ul>
+
+<button onclick="location.reload()">다시 하기</button>
+
+</div>
+
+</div>
 
 <script>
 
-const words = [
+const words=[
 ["achieve","성취하다"],
 ["accept","받아들이다"],
 ["allow","허락하다"],
@@ -135,39 +195,135 @@ const words = [
 ["value","가치"]
 ];
 
-const cards=document.getElementById("cards");
+let current;
+let score=0;
+let combo=0;
+let life=3;
+let total=0;
+let correct=0;
+let wrong=[];
 
-function display(){
-    cards.innerHTML="";
-    words.forEach(([word,meaning])=>{
-        const card=document.createElement("div");
-        card.className="card";
-
-        card.innerHTML=`
-            <div class="word">${word}</div>
-            <div class="meaning">${meaning}</div>
-        `;
-
-        card.onclick=()=>{
-            card.classList.toggle("learned");
-        }
-
-        cards.appendChild(card);
-    });
+function randomWord(){
+current=words[Math.floor(Math.random()*words.length)];
+document.getElementById("meaning").innerHTML=current[1];
+document.getElementById("answer").value="";
+document.getElementById("answer").focus();
 }
 
-function toggleMeaning(){
-    document.querySelectorAll(".meaning").forEach(m=>{
-        m.style.display=(m.style.display==="block")?"none":"block";
-    });
+function checkAnswer(){
+
+let input=document.getElementById("answer").value.trim().toLowerCase();
+
+total++;
+
+if(input===current[0]){
+
+score+=10+combo;
+
+combo++;
+correct++;
+
+message.innerHTML="✅ Correct!";
+message.className="correct";
+
+}else{
+
+life--;
+combo=0;
+
+score=Math.max(0,score-3);
+
+wrong.push(current[0]+" = "+current[1]);
+
+message.innerHTML="❌ "+current[0];
+message.className="wrong";
+
 }
 
-function shuffleCards(){
-    words.sort(()=>Math.random()-0.5);
-    display();
+update();
+
+if(life<=0){
+finish();
+return;
 }
 
-display();
+randomWord();
+
+}
+
+function update(){
+
+scoreSpan.innerHTML=score;
+comboSpan.innerHTML=combo;
+lifeSpan.innerHTML=life;
+
+}
+
+function startGame(){
+
+start.style.display="none";
+game.style.display="block";
+
+window.scoreSpan=document.getElementById("score");
+window.comboSpan=document.getElementById("combo");
+window.lifeSpan=document.getElementById("life");
+window.message=document.getElementById("message");
+
+randomWord();
+
+let time=60;
+
+let timer=setInterval(()=>{
+
+time--;
+
+document.getElementById("time").innerHTML=time;
+
+if(time<=0){
+
+clearInterval(timer);
+
+finish();
+
+}
+
+},1000);
+
+}
+
+function finish(){
+
+game.style.display="none";
+
+result.style.display="block";
+
+finalScore.innerHTML="⭐ 점수 : "+score;
+
+accuracy.innerHTML="정답률 : "+Math.round(correct/Math.max(total,1)*100)+"%";
+
+let ul=document.getElementById("wrongList");
+
+wrong.forEach(w=>{
+
+let li=document.createElement("li");
+
+li.innerHTML=w;
+
+ul.appendChild(li);
+
+});
+
+}
+
+document.addEventListener("keydown",e=>{
+
+if(e.key==="Enter" && game.style.display==="block"){
+
+checkAnswer();
+
+}
+
+});
 
 </script>
 
